@@ -338,20 +338,21 @@ function pushbutton5_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
   
+y = handles.y;
 %% Apply low pass filter to lowest band
   G = (get(handles.slider1, 'value') - 0.5) * 32
   fcb = 300;
   Q = 3;
   type = 'Base_Shelf';
   [b a] = shelving(G, fcb, handles.Fs, Q, type);
-  y = filter(b,a, handles.y);
+  y = filter(b,a, y);
 %% Apply high pass filter to highest band
   G = (get(handles.slider10, 'value') - 0.5) * 32
   fcb = 10000;
   Q = 3;
   type = 'Treble_Shelf';
   [b a] = shelving(G, fcb, handles.Fs, Q, type);
-  y = filter(b,a, handles.y);
+  y = filter(b,a, y);
 %% Apply Changes
   handles.player = audioplayer(y, handles.Fs);
   plot(handles.axes1, y);
