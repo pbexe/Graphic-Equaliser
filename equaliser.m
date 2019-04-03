@@ -88,7 +88,7 @@ function slider1_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-pushbutton5_Callback(handles.pushbutton5, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 % --- Executes during object creation, after setting all properties.
 function slider1_CreateFcn(hObject, eventdata, handles)
@@ -110,7 +110,7 @@ function slider2_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-pushbutton5_Callback(handles.pushbutton5, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -133,7 +133,7 @@ function slider3_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-pushbutton5_Callback(handles.pushbutton5, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -156,7 +156,7 @@ function slider4_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-pushbutton5_Callback(handles.pushbutton5, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -179,7 +179,7 @@ function slider5_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-pushbutton5_Callback(handles.pushbutton5, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -202,7 +202,7 @@ function slider6_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-pushbutton5_Callback(handles.pushbutton5, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -225,7 +225,7 @@ function slider7_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-pushbutton5_Callback(handles.pushbutton5, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -248,7 +248,7 @@ function slider8_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-pushbutton5_Callback(handles.pushbutton5, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -271,7 +271,7 @@ function slider9_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-pushbutton5_Callback(handles.pushbutton5, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -294,7 +294,7 @@ function slider10_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-pushbutton5_Callback(handles.pushbutton5, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -321,7 +321,9 @@ function pushbutton2_Callback(hObject, eventdata, handles)
   [handles.y, handles.Fs]=audioread(name);
   cd(p);
   handles.player = audioplayer(handles.y, handles.Fs);
-  plot(handles.axes1, handles.y);
+  yf = fft(handles.y);     
+  f = (0:length(yf)-1)*50/length(yf);
+  plot(handles.axes1, f, yf);
   guidata(hObject, handles);
 
   
@@ -342,7 +344,7 @@ pause(handles.player)
 
 
 % --- Executes on button press in pushbutton5.
-function pushbutton5_Callback(hObject, eventdata, handles)
+function apply(hObject, eventdata, handles)
 % hObject    handle to pushbutton5 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -363,10 +365,52 @@ y = handles.y;
   [b a] = shelving(G, fcb, handles.Fs, Q, type);
   y = filter(b,a, y);
 %% Apply low pass filter to band 3
-  G = (get(handles.slider2, 'value') - 0.5) * 32;
+  G = (get(handles.slider3, 'value') - 0.5) * 32;
   fcb = 125;
   Q = 3;
   type = 'Base_Shelf';
+  [b a] = shelving(G, fcb, handles.Fs, Q, type);
+  y = filter(b,a, y);
+%% Apply low pass filter to band 4
+  G = (get(handles.slider4, 'value') - 0.5) * 32;
+  fcb = 250;
+  Q = 3;
+  type = 'Base_Shelf';
+  [b a] = shelving(G, fcb, handles.Fs, Q, type);
+  y = filter(b,a, y);
+%% Apply low pass filter to band 5
+  G = (get(handles.slider5, 'value') - 0.5) * 32;
+  fcb = 500;
+  Q = 3;
+  type = 'Base_Shelf';
+  [b a] = shelving(G, fcb, handles.Fs, Q, type);
+  y = filter(b,a, y);
+%% Apply high pass filter to band 6
+  G = (get(handles.slider6, 'value') - 0.5) * 32;
+  fcb = 1000;
+  Q = 3;
+  type = 'Treble_Shelf';
+  [b a] = shelving(G, fcb, handles.Fs, Q, type);
+  y = filter(b,a, y);
+%% Apply high pass filter to band 7
+  G = (get(handles.slider7, 'value') - 0.5) * 32;
+  fcb = 2000;
+  Q = 3;
+  type = 'Treble_Shelf';
+  [b a] = shelving(G, fcb, handles.Fs, Q, type);
+  y = filter(b,a, y);
+%% Apply high pass filter to band 8
+  G = (get(handles.slider8, 'value') - 0.5) * 32;
+  fcb = 4000;
+  Q = 3;
+  type = 'Treble_Shelf';
+  [b a] = shelving(G, fcb, handles.Fs, Q, type);
+  y = filter(b,a, y);
+%% Apply high pass filter to band 9
+  G = (get(handles.slider9, 'value') - 0.5) * 32;
+  fcb = 8000;
+  Q = 3;
+  type = 'Treble_Shelf';
   [b a] = shelving(G, fcb, handles.Fs, Q, type);
   y = filter(b,a, y);
 %% Apply high pass filter to highest band
@@ -378,5 +422,7 @@ y = handles.y;
   y = filter(b,a, y);
 %% Apply Changes
   handles.player = audioplayer(y, handles.Fs);
-  plot(handles.axes1, y);
+  yf = fft(y);     
+  f = (0:length(yf)-1)*50/length(yf);
+  plot(handles.axes1, abs(yf(:,1)));
   guidata(hObject, handles);
