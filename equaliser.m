@@ -361,57 +361,49 @@ y = handles.y;
   G = (get(handles.slider2, 'value') - 0.5) * 32;
   fcb = 62;
   Q = 3;
-  type = 'Base_Shelf';
-  [b a] = shelving(G, fcb, handles.Fs, Q, type);
+  [b a] = peaking(G, fcb, Q, handles.Fs);
   y = filter(b,a, y);
 %% Apply low pass filter to band 3
   G = (get(handles.slider3, 'value') - 0.5) * 32;
   fcb = 125;
   Q = 3;
-  type = 'Base_Shelf';
-  [b a] = shelving(G, fcb, handles.Fs, Q, type);
+  [b a] = peaking(G, fcb, Q, handles.Fs);
   y = filter(b,a, y);
 %% Apply low pass filter to band 4
   G = (get(handles.slider4, 'value') - 0.5) * 32;
   fcb = 250;
   Q = 3;
-  type = 'Base_Shelf';
-  [b a] = shelving(G, fcb, handles.Fs, Q, type);
+  [b a] = peaking(G, fcb, Q, handles.Fs);;
   y = filter(b,a, y);
 %% Apply low pass filter to band 5
   G = (get(handles.slider5, 'value') - 0.5) * 32;
   fcb = 500;
   Q = 3;
-  type = 'Base_Shelf';
-  [b a] = shelving(G, fcb, handles.Fs, Q, type);
+  [b a] = peaking(G, fcb, Q, handles.Fs);
   y = filter(b,a, y);
 %% Apply high pass filter to band 6
   G = (get(handles.slider6, 'value') - 0.5) * 32;
   fcb = 1000;
   Q = 3;
-  type = 'Treble_Shelf';
-  [b a] = shelving(G, fcb, handles.Fs, Q, type);
+  [b a] = peaking(G, fcb, Q, handles.Fs);
   y = filter(b,a, y);
 %% Apply high pass filter to band 7
   G = (get(handles.slider7, 'value') - 0.5) * 32;
   fcb = 2000;
   Q = 3;
-  type = 'Treble_Shelf';
-  [b a] = shelving(G, fcb, handles.Fs, Q, type);
+  [b a] = peaking(G, fcb, Q, handles.Fs);
   y = filter(b,a, y);
 %% Apply high pass filter to band 8
   G = (get(handles.slider8, 'value') - 0.5) * 32;
   fcb = 4000;
   Q = 3;
-  type = 'Treble_Shelf';
-  [b a] = shelving(G, fcb, handles.Fs, Q, type);
+  [b a] = peaking(G, fcb, Q, handles.Fs);
   y = filter(b,a, y);
 %% Apply high pass filter to band 9
   G = (get(handles.slider9, 'value') - 0.5) * 32;
   fcb = 8000;
   Q = 3;
-  type = 'Treble_Shelf';
-  [b a] = shelving(G, fcb, handles.Fs, Q, type);
+  [b a] = peaking(G, fcb, Q, handles.Fs);
   y = filter(b,a, y);
 %% Apply high pass filter to highest band
   G = (get(handles.slider10, 'value') - 0.5) * 32;
