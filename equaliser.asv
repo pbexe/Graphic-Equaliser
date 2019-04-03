@@ -363,37 +363,37 @@ y = handles.y;
 %% Apply low pass filter to band 3
   G = (get(handles.slider3, 'value') - 0.5) * 32;
   fc = 125;
-  fb = 63;
+  fb = 50;
   y = peakfilt(y, 2*fc/handles.Fs, 2*fb/handles.Fs, G);
 %% Apply low pass filter to band 4
   G = (get(handles.slider4, 'value') - 0.5) * 32;
   fc = 250;
-  fb = 125;
+  fb = 50;
   y = peakfilt(y, 2*fc/handles.Fs, 2*fb/handles.Fs, G);
 %% Apply low pass filter to band 5
   G = (get(handles.slider5, 'value') - 0.5) * 32;
   fc = 500;
-  fb = 250;
+  fb = 50;
   y = peakfilt(y, 2*fc/handles.Fs, 2*fb/handles.Fs, G);
 %% Apply high pass filter to band 6
   G = (get(handles.slider6, 'value') - 0.5) * 32;
   fc = 1000;
-  fb = 500;
+  fb = 50;
   y = peakfilt(y, 2*fc/handles.Fs, 2*fb/handles.Fs, G);
 %% Apply high pass filter to band 7
   G = (get(handles.slider7, 'value') - 0.5) * 32;
   fc = 2000;
-  fb = 1000;
+  fb = 50;
   y = peakfilt(y, 2*fc/handles.Fs, 2*fb/handles.Fs, G);
 %% Apply high pass filter to band 8
   G = (get(handles.slider8, 'value') - 0.5) * 32;
   fc = 4000;
-  fb = 2000;
+  fb = 50;
   y = peakfilt(y, 2*fc/handles.Fs, 2*fb/handles.Fs, G);
 %% Apply high pass filter to band 9
   G = (get(handles.slider9, 'value') - 0.5) * 32;
   fc = 8000;
-  fb = 4000;
+  fb = 50;
   y = peakfilt(y, 2*fc/handles.Fs, 2*fb/handles.Fs, G);
 %% Apply high pass filter to highest band
   G = (get(handles.slider10, 'value') - 0.5) * 32;
@@ -405,5 +405,5 @@ y = handles.y;
 %% Apply Changes
   handles.player = audioplayer(y, handles.Fs);
   yf = fft(y);     
-  plot(handles.axes1, y);
+  plot(handles.axes1, abs(yf(:,1)));
   guidata(hObject, handles);
