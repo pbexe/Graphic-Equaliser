@@ -88,7 +88,7 @@ function slider1_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 % --- Executes during object creation, after setting all properties.
 function slider1_CreateFcn(hObject, eventdata, handles)
@@ -110,7 +110,7 @@ function slider2_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -133,7 +133,7 @@ function slider3_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -156,7 +156,7 @@ function slider4_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -179,7 +179,7 @@ function slider5_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -202,7 +202,7 @@ function slider6_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -225,7 +225,7 @@ function slider7_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -248,7 +248,7 @@ function slider8_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -271,7 +271,7 @@ function slider9_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -294,7 +294,7 @@ function slider10_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
+apply(handles.pushbutton5, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
