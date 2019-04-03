@@ -321,9 +321,7 @@ function pushbutton2_Callback(hObject, eventdata, handles)
   [handles.y, handles.Fs]=audioread(name);
   cd(p);
   handles.player = audioplayer(handles.y, handles.Fs);
-  yf = fft(handles.y);     
-  f = (0:length(yf)-1)*50/length(yf);
-  plot(handles.axes1, f, yf);
+  apply(hObject, eventdata, handles)
   guidata(hObject, handles);
 
   
@@ -415,6 +413,5 @@ y = handles.y;
 %% Apply Changes
   handles.player = audioplayer(y, handles.Fs);
   yf = fft(y);     
-  f = (0:length(yf)-1)*50/length(yf);
   plot(handles.axes1, abs(yf(:,1)));
   guidata(hObject, handles);
