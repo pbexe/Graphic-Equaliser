@@ -22,7 +22,7 @@ function varargout = equaliser(varargin)
 
 % Edit the above text to modify the response to help equaliser
 
-% Last Modified by GUIDE v2.5 01-Apr-2019 13:40:44
+% Last Modified by GUIDE v2.5 05-Apr-2019 13:20:29
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -346,7 +346,8 @@ function apply(hObject, eventdata, handles)
 % hObject    handle to pushbutton5 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-  
+set(handles.loading, 'Visible', 'on');
+pause(0); % For some reason the loading text only works when the program pauses for 0 seconds...
 y = handles.y;
 %% Apply low pass filter to lowest band
   G = (get(handles.slider1, 'value') - 0.5) * 32;
@@ -407,3 +408,51 @@ y = handles.y;
   yf = fft(y);     
   plot(handles.axes1, y);
   guidata(hObject, handles);
+  set(handles.loading, 'Visible', 'off');
+
+
+% --- Executes on button press in loadeq.
+function loadeq_Callback(hObject, eventdata, handles)
+% hObject    handle to loadeq (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[name,fpath]=uigetfile({'*.eq'},...
+  'Select Equaliser File');
+  p = pwd;
+  cd(fpath);
+  data = load(name, 'data', '-ascii');
+  cd(p);
+  set(handles.slider1, 'value', data(1))
+  set(handles.slider2, 'value', data(2))
+  set(handles.slider3, 'value', data(3))
+  set(handles.slider4, 'value', data(4))
+  set(handles.slider5, 'value', data(5))
+  set(handles.slider6, 'value', data(6))
+  set(handles.slider7, 'value', data(7))
+  set(handles.slider8, 'value', data(8))
+  set(handles.slider9, 'value', data(9))
+  set(handles.slider10, 'value', data(10))
+  apply(hObject, eventdata, handles);
+
+% --- Executes on button press in saveeq.
+function saveeq_Callback(hObject, eventdata, handles)
+% hObject    handle to saveeq (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+data = zeros(10, 1);
+data(1) = get(handles.slider1, 'value');
+data(2) = get(handles.slider2, 'value');
+data(3) = get(handles.slider3, 'value');
+data(4) = get(handles.slider4, 'value');
+data(5) = get(handles.slider5, 'value');
+data(6) = get(handles.slider6, 'value');
+data(7) = get(handles.slider7, 'value');
+data(8) = get(handles.slider8, 'value');
+data(9) = get(handles.slider9, 'value');
+data(10) = get(handles.slider10, 'value');
+
+[file,p, index] = uiputfile({'*.eq'});
+c = pwd;
+cd(p);
+save(file, 'data', '-ascii');
+cd(c);
