@@ -22,7 +22,7 @@ function varargout = equaliser(varargin)
 
 % Edit the above text to modify the response to help equaliser
 
-% Last Modified by GUIDE v2.5 01-Apr-2019 13:40:44
+% Last Modified by GUIDE v2.5 07-Apr-2019 11:58:24
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -88,7 +88,6 @@ function slider1_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
 
 % --- Executes during object creation, after setting all properties.
 function slider1_CreateFcn(hObject, eventdata, handles)
@@ -110,7 +109,6 @@ function slider2_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -133,8 +131,6 @@ function slider3_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
-
 
 % --- Executes during object creation, after setting all properties.
 function slider3_CreateFcn(hObject, eventdata, handles)
@@ -156,7 +152,6 @@ function slider4_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -179,7 +174,6 @@ function slider5_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -202,7 +196,6 @@ function slider6_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -225,7 +218,6 @@ function slider7_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -248,7 +240,6 @@ function slider8_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -271,7 +262,6 @@ function slider9_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -294,7 +284,6 @@ function slider10_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-apply(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -321,7 +310,7 @@ function pushbutton2_Callback(hObject, eventdata, handles)
   [handles.y, handles.Fs]=audioread(name);
   cd(p);
   handles.player = audioplayer(handles.y, handles.Fs);
-  apply(hObject, eventdata, handles)
+  apply_Callback(hObject, eventdata, handles)
   guidata(hObject, handles);
 
   
@@ -341,13 +330,64 @@ function pushbutton4_Callback(hObject, eventdata, handles)
 pause(handles.player)
 
 
-% --- Executes on button press in pushbutton5.
-function apply(hObject, eventdata, handles)
-% hObject    handle to pushbutton5 (see GCBO)
+
+% --- Executes on button press in loadeq.
+function loadeq_Callback(hObject, eventdata, handles)
+% hObject    handle to loadeq (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-  
+[name,fpath]=uigetfile({'*.eq'},...
+  'Select Equaliser File');
+  p = pwd;
+  cd(fpath);
+  data = load(name, 'data', '-ascii');
+  cd(p);
+  set(handles.slider1, 'value', data(1))
+  set(handles.slider2, 'value', data(2))
+  set(handles.slider3, 'value', data(3))
+  set(handles.slider4, 'value', data(4))
+  set(handles.slider5, 'value', data(5))
+  set(handles.slider6, 'value', data(6))
+  set(handles.slider7, 'value', data(7))
+  set(handles.slider8, 'value', data(8))
+  set(handles.slider9, 'value', data(9))
+  set(handles.slider10, 'value', data(10))
+  apply_Callback(hObject, eventdata, handles);
+
+% --- Executes on button press in saveeq.
+function saveeq_Callback(hObject, eventdata, handles)
+% hObject    handle to saveeq (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+data = zeros(10, 1);
+data(1) = get(handles.slider1, 'value');
+data(2) = get(handles.slider2, 'value');
+data(3) = get(handles.slider3, 'value');
+data(4) = get(handles.slider4, 'value');
+data(5) = get(handles.slider5, 'value');
+data(6) = get(handles.slider6, 'value');
+data(7) = get(handles.slider7, 'value');
+data(8) = get(handles.slider8, 'value');
+data(9) = get(handles.slider9, 'value');
+data(10) = get(handles.slider10, 'value');
+
+[file,p, index] = uiputfile({'*.eq'});
+c = pwd;
+cd(p);
+save(file, 'data', '-ascii');
+cd(c);
+
+
+% --- Executes on button press in apply.
+function apply_Callback(hObject, eventdata, handles)
+% hObject    handle to apply (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set(handles.loading, 'Visible', 'on');
+pause(0); % For some reason the loading text only works when the program pauses for 0 seconds...
 y = handles.y;
+%% Apply volume
+  y = y * get(handles.slider11, 'value');
 %% Apply low pass filter to lowest band
   G = (get(handles.slider1, 'value') - 0.5) * 32;
   fcb = 31;
@@ -363,37 +403,37 @@ y = handles.y;
 %% Apply low pass filter to band 3
   G = (get(handles.slider3, 'value') - 0.5) * 32;
   fc = 125;
-  fb = 50;
+  fb = 63;
   y = peakfilt(y, 2*fc/handles.Fs, 2*fb/handles.Fs, G);
 %% Apply low pass filter to band 4
   G = (get(handles.slider4, 'value') - 0.5) * 32;
   fc = 250;
-  fb = 50;
+  fb = 125;
   y = peakfilt(y, 2*fc/handles.Fs, 2*fb/handles.Fs, G);
 %% Apply low pass filter to band 5
   G = (get(handles.slider5, 'value') - 0.5) * 32;
   fc = 500;
-  fb = 50;
+  fb = 250;
   y = peakfilt(y, 2*fc/handles.Fs, 2*fb/handles.Fs, G);
 %% Apply high pass filter to band 6
   G = (get(handles.slider6, 'value') - 0.5) * 32;
   fc = 1000;
-  fb = 50;
+  fb = 500;
   y = peakfilt(y, 2*fc/handles.Fs, 2*fb/handles.Fs, G);
 %% Apply high pass filter to band 7
   G = (get(handles.slider7, 'value') - 0.5) * 32;
   fc = 2000;
-  fb = 50;
+  fb = 1000;
   y = peakfilt(y, 2*fc/handles.Fs, 2*fb/handles.Fs, G);
 %% Apply high pass filter to band 8
   G = (get(handles.slider8, 'value') - 0.5) * 32;
   fc = 4000;
-  fb = 50;
+  fb = 2000;
   y = peakfilt(y, 2*fc/handles.Fs, 2*fb/handles.Fs, G);
 %% Apply high pass filter to band 9
   G = (get(handles.slider9, 'value') - 0.5) * 32;
   fc = 8000;
-  fb = 50;
+  fb = 4000;
   y = peakfilt(y, 2*fc/handles.Fs, 2*fb/handles.Fs, G);
 %% Apply high pass filter to highest band
   G = (get(handles.slider10, 'value') - 0.5) * 32;
@@ -405,5 +445,57 @@ y = handles.y;
 %% Apply Changes
   handles.player = audioplayer(y, handles.Fs);
   yf = fft(y);     
-  plot(handles.axes1, abs(yf(:,1)));
+  plot(handles.axes1, y);
   guidata(hObject, handles);
+  set(handles.loading, 'Visible', 'off');
+
+
+% --- Executes on slider movement.
+function slider11_Callback(hObject, eventdata, handles)
+% hObject    handle to slider11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+
+% --- Executes during object creation, after setting all properties.
+function slider11_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on button press in load_modulating.
+function load_modulating_Callback(hObject, eventdata, handles)
+% hObject    handle to load_modulating (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[name,fpath]=uigetfile({'*.*','All Files'},...
+  'Select Audio');
+  p = pwd;
+  cd(fpath);
+  [handles.yMod, handles.FsMod]=audioread(name);
+  cd(p);
+  apply_Callback(hObject, eventdata, handles)
+  guidata(hObject, handles);
+
+
+% --- Executes on button press in applyMod.
+function applyMod_Callback(hObject, eventdata, handles)
+% hObject    handle to applyMod (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% From https://uk.mathworks.com/matlabcentral/fileexchange/66200-cross-synthesis-example-with-matlab-implementation
+
+x = handles.y;
+fsx = handles.Fs;
+
+x = 
