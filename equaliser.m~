@@ -22,7 +22,7 @@ function varargout = equaliser(varargin)
 
 % Edit the above text to modify the response to help equaliser
 
-% Last Modified by GUIDE v2.5 08-Apr-2019 13:32:27
+% Last Modified by GUIDE v2.5 07-Apr-2019 22:12:34
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -396,7 +396,7 @@ filters = zeros(3, 20);
 %% Apply low pass filter to lowest band
   G = (get(handles.slider1, 'value') - 0.5) * 32;
   fcb = 31;
-  Q = sqrt(2);
+  Q = ;
   type = 'Base_Shelf';
   [b a] = shelving(G, fcb, handles.Fs, Q, type);
   filters(:, 1) = b;
@@ -405,7 +405,7 @@ filters = zeros(3, 20);
 %% Apply low pass filter to band 2
   G = (get(handles.slider2, 'value') - 0.5) * 32;
   fcb = 62;
-  Q = 1;
+  Q = 30;
   [b a] = peaking(G, fcb, Q, handles.Fs);
   filters(:, 3) = b;
   filters(:, 4) = a;
@@ -413,7 +413,7 @@ filters = zeros(3, 20);
 %% Apply low pass filter to band 3
   G = (get(handles.slider3, 'value') - 0.5) * 32;
   fcb = 125;
-  Q = 1;
+  Q = 30;
   [b a] = peaking(G, fcb, Q, handles.Fs);
   filters(:, 5) = b;
   filters(:, 6) = a;
@@ -421,7 +421,7 @@ filters = zeros(3, 20);
 %% Apply low pass filter to band 4
   G = (get(handles.slider4, 'value') - 0.5) * 32;
   fcb = 250;
-  Q = 1;
+  Q = 3;
   [b a] = peaking(G, fcb, Q, handles.Fs);
   filters(:, 7) = b;
   filters(:, 8) = a;
@@ -429,7 +429,7 @@ filters = zeros(3, 20);
 %% Apply low pass filter to band 5
   G = (get(handles.slider5, 'value') - 0.5) * 32;
   fcb = 500;
-  Q = 1;
+  Q = 3;
   [b a] = peaking(G, fcb, Q, handles.Fs);
   filters(:, 9) = b;
   filters(:, 10) = a;
@@ -445,7 +445,7 @@ filters = zeros(3, 20);
 %% Apply high pass filter to band 7
   G = (get(handles.slider7, 'value') - 0.5) * 32;
   fcb = 2000;
-  Q = 1;
+  Q = 3;
   [b a] = peaking(G, fcb, Q, handles.Fs);
   filters(:, 13) = b;
   filters(:, 14) = a;
@@ -453,7 +453,7 @@ filters = zeros(3, 20);
 %% Apply high pass filter to band 8
   G = (get(handles.slider8, 'value') - 0.5) * 32;
   fcb = 4000;
-  Q = 1;
+  Q = 3;
   [b a] = peaking(G, fcb, Q, handles.Fs);
   filters(:, 15) = b;
   filters(:, 16) = a;
@@ -461,7 +461,7 @@ filters = zeros(3, 20);
 %% Apply high pass filter to band 9
   G = (get(handles.slider9, 'value') - 0.5) * 32;
   fcb = 8000;
-  Q = 1;
+  Q = 3;
   [b a] = peaking(G, fcb, Q, handles.Fs);
   filters(:, 17) = b;
   filters(:, 18) = a;
@@ -469,7 +469,7 @@ filters = zeros(3, 20);
 %% Apply high pass filter to highest band
   G = (get(handles.slider10, 'value') - 0.5) * 32;
   fcb = 16000;
-  Q = 1;
+  Q = 3;
   type = 'Treble_Shelf';
   [b a] = shelving(G, fcb, handles.Fs, Q, type);
   filters(:, 19) = b;
@@ -479,10 +479,18 @@ y = filter(b,a, y);
   handles.player = audioplayer(y, handles.Fs);
   yf = fft(y);     
   plot(handles.axes1, y);
-  handles.filters = filters;
   guidata(hObject, handles);
   set(handles.loading, 'Visible', 'off');
-
+  fvtool(filters(:, 1), filters(:, 2),...
+         filters(:, 3), filters(:, 4),...
+         filters(:, 5), filters(:, 6),...
+         filters(:, 7), filters(:, 8),...
+         filters(:, 9), filters(:, 10),...
+         filters(:, 11), filters(:, 12),...
+         filters(:, 13), filters(:, 14),...
+         filters(:, 15), filters(:, 16),...
+         filters(:, 17), filters(:, 18),...
+         filters(:, 19), filters(:, 20));
 
 
 % --- Executes on slider movement.
@@ -613,21 +621,3 @@ function saveMod_Callback(hObject, eventdata, handles)
 % hObject    handle to saveMod (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in freqResponse.
-function freqResponse_Callback(hObject, eventdata, handles)
-% hObject    handle to freqResponse (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-filters = handles.filters;
-  fvtool(filters(:, 1), filters(:, 2),...
-         filters(:, 3), filters(:, 4),...
-         filters(:, 5), filters(:, 6),...
-         filters(:, 7), filters(:, 8),...
-         filters(:, 9), filters(:, 10),...
-         filters(:, 11), filters(:, 12),...
-         filters(:, 13), filters(:, 14),...
-         filters(:, 15), filters(:, 16),...
-         filters(:, 17), filters(:, 18),...
-         filters(:, 19), filters(:, 20));
