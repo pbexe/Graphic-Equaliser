@@ -22,7 +22,7 @@ function varargout = equaliser(varargin)
 
 % Edit the above text to modify the response to help equaliser
 
-% Last Modified by GUIDE v2.5 08-Apr-2019 13:32:27
+% Last Modified by GUIDE v2.5 08-Apr-2019 14:51:43
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -476,6 +476,9 @@ filters = zeros(3, 20);
   filters(:, 20) = a;
 y = filter(b,a, y);
 %% Apply Changes
+  if get(handles.enableReverb, 'Value')
+      y = rev(y, get(handles.revGain, 'value'), get(handles.delay, 'value'));
+  end
   handles.player = audioplayer(y, handles.Fs);
   yf = fft(y);     
   plot(handles.axes1, y);
@@ -631,3 +634,56 @@ filters = handles.filters;
          filters(:, 15), filters(:, 16),...
          filters(:, 17), filters(:, 18),...
          filters(:, 19), filters(:, 20));
+
+
+% --- Executes on slider movement.
+function delay_Callback(hObject, eventdata, handles)
+% hObject    handle to delay (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+
+% --- Executes during object creation, after setting all properties.
+function delay_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to delay (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on slider movement.
+function revGain_Callback(hObject, eventdata, handles)
+% hObject    handle to revGain (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+
+% --- Executes during object creation, after setting all properties.
+function revGain_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to revGain (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on button press in enableReverb.
+function enableReverb_Callback(hObject, eventdata, handles)
+% hObject    handle to enableReverb (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of enableReverb
