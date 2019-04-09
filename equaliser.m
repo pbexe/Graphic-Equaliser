@@ -22,7 +22,7 @@ function varargout = equaliser(varargin)
 
 % Edit the above text to modify the response to help equaliser
 
-% Last Modified by GUIDE v2.5 08-Apr-2019 14:51:43
+% Last Modified by GUIDE v2.5 09-Apr-2019 13:04:03
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -405,7 +405,7 @@ filters = zeros(3, 20);
 %% Apply low pass filter to band 2
   G = (get(handles.slider2, 'value') - 0.5) * 32;
   fcb = 62;
-  Q = 1;
+  Q = sqrt(2);
   [b a] = peaking(G, fcb, Q, handles.Fs);
   filters(:, 3) = b;
   filters(:, 4) = a;
@@ -413,7 +413,7 @@ filters = zeros(3, 20);
 %% Apply low pass filter to band 3
   G = (get(handles.slider3, 'value') - 0.5) * 32;
   fcb = 125;
-  Q = 1;
+  Q = sqrt(2);
   [b a] = peaking(G, fcb, Q, handles.Fs);
   filters(:, 5) = b;
   filters(:, 6) = a;
@@ -421,7 +421,7 @@ filters = zeros(3, 20);
 %% Apply low pass filter to band 4
   G = (get(handles.slider4, 'value') - 0.5) * 32;
   fcb = 250;
-  Q = 1;
+  Q = sqrt(2);
   [b a] = peaking(G, fcb, Q, handles.Fs);
   filters(:, 7) = b;
   filters(:, 8) = a;
@@ -429,7 +429,7 @@ filters = zeros(3, 20);
 %% Apply low pass filter to band 5
   G = (get(handles.slider5, 'value') - 0.5) * 32;
   fcb = 500;
-  Q = 1;
+  Q = sqrt(2);
   [b a] = peaking(G, fcb, Q, handles.Fs);
   filters(:, 9) = b;
   filters(:, 10) = a;
@@ -437,7 +437,7 @@ filters = zeros(3, 20);
 %% Apply high pass filter to band 6
   G = (get(handles.slider6, 'value') - 0.5) * 32;
   fcb = 1000;
-  Q = 3;
+  Q = sqrt(2);
   [b a] = peaking(G, fcb, Q, handles.Fs);
   filters(:, 11) = b;
   filters(:, 12) = a;
@@ -445,7 +445,7 @@ filters = zeros(3, 20);
 %% Apply high pass filter to band 7
   G = (get(handles.slider7, 'value') - 0.5) * 32;
   fcb = 2000;
-  Q = 1;
+  Q = sqrt(2);
   [b a] = peaking(G, fcb, Q, handles.Fs);
   filters(:, 13) = b;
   filters(:, 14) = a;
@@ -453,7 +453,7 @@ filters = zeros(3, 20);
 %% Apply high pass filter to band 8
   G = (get(handles.slider8, 'value') - 0.5) * 32;
   fcb = 4000;
-  Q = 1;
+  Q = sqrt(2);
   [b a] = peaking(G, fcb, Q, handles.Fs);
   filters(:, 15) = b;
   filters(:, 16) = a;
@@ -461,7 +461,7 @@ filters = zeros(3, 20);
 %% Apply high pass filter to band 9
   G = (get(handles.slider9, 'value') - 0.5) * 32;
   fcb = 8000;
-  Q = 1;
+  Q = sqrt(2);
   [b a] = peaking(G, fcb, Q, handles.Fs);
   filters(:, 17) = b;
   filters(:, 18) = a;
@@ -469,7 +469,7 @@ filters = zeros(3, 20);
 %% Apply high pass filter to highest band
   G = (get(handles.slider10, 'value') - 0.5) * 32;
   fcb = 16000;
-  Q = 1;
+  Q = sqrt(2);
   type = 'Treble_Shelf';
   [b a] = shelving(G, fcb, handles.Fs, Q, type);
   filters(:, 19) = b;
@@ -477,7 +477,34 @@ filters = zeros(3, 20);
 y = filter(b,a, y);
 %% Apply Changes
   if get(handles.enableReverb, 'Value')
-      y = rev(y, get(handles.revGain, 'value'), get(handles.delay, 'value'));
+    x = y;
+    Fs = handles.Fs;
+
+    % Call moorer reverb
+    %set delay of each comb filter
+    %set delay of each allpass filter in number of samples
+    %Compute a random set of milliseconds and use sample rate
+    rand('state',sum(100*clock))
+    cd = floor(0.05*rand([1,6])*Fs);
+
+    % set gains of 6 comb pass filters
+    g1 = 0.5*ones(1,6);
+    %set feedback of each comb filter
+    g2 = 0.5*ones(1,6);
+    % set input cg and cg1 for moorer function see help moorer
+    cg = g2./(1-g1);
+    cg1 = g1;
+
+
+    %set gain of allpass filter
+    ag = get(handles.revGain, 'value');
+    %set delay of allpass filter
+    ad = round(get(handles.delay, 'value')*Fs);
+    %set direct signal gain
+    k = 0.5;
+
+
+    [y b a] = moorer(x,cg,cg1,cd,ag,ad,k);
   end
   handles.player = audioplayer(y, handles.Fs);
   yf = fft(y);     
@@ -624,7 +651,7 @@ function freqResponse_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 filters = handles.filters;
-  fvtool(filters(:, 1), filters(:, 2),...
+h = fvtool(filters(:, 1), filters(:, 2),...
          filters(:, 3), filters(:, 4),...
          filters(:, 5), filters(:, 6),...
          filters(:, 7), filters(:, 8),...
@@ -634,7 +661,8 @@ filters = handles.filters;
          filters(:, 15), filters(:, 16),...
          filters(:, 17), filters(:, 18),...
          filters(:, 19), filters(:, 20));
-
+set(h, 'FrequencyScale', 'Log');
+set(h, 'NormalizedFrequency', 'Off');
 
 % --- Executes on slider movement.
 function delay_Callback(hObject, eventdata, handles)
@@ -687,3 +715,25 @@ function enableReverb_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of enableReverb
+
+
+% --- Executes on button press in combined.
+function combined_Callback(hObject, eventdata, handles)
+% hObject    handle to combined (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+filters = handles.filters;
+H1=dfilt.df2t(filters(:, 1), filters(:, 2));
+H2=dfilt.df2t(filters(:, 3), filters(:, 4));
+H3=dfilt.df2t(filters(:, 5), filters(:, 6));
+H4=dfilt.df2t(filters(:, 7), filters(:, 8));
+H5=dfilt.df2t(filters(:, 9), filters(:, 10));
+H6=dfilt.df2t(filters(:, 11), filters(:, 12));
+H7=dfilt.df2t(filters(:, 13), filters(:, 14));
+H8=dfilt.df2t(filters(:, 15), filters(:, 16));
+H9=dfilt.df2t(filters(:, 17), filters(:, 18));
+H10=dfilt.df2t(filters(:, 19), filters(:, 20));
+Hcas=dfilt.cascade(H1,H2,H3,H4,H5,H6,H7,H8,H9,H10)
+h = fvtool(Hcas)
+set(h, 'FrequencyScale', 'Log');
+set(h, 'NormalizedFrequency', 'Off')
