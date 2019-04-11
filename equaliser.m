@@ -520,8 +520,7 @@ y = filter(b,a, y);
   if get(handles.enableVib, 'Value')
       y = vibrato(y, handles.Fs, get(handles.freq, 'value'), get(handles.vibratoWidth, 'value'));
   end
-  handles.player = audioplayer(y, handles.Fs);
-  yf = fft(y);     
+  handles.player = audioplayer(y, handles.Fs); 
   plot(handles.axes1, y);
   set(handles.freqResponse,'Enable','on')
   set(handles.combined,'Enable','on')
@@ -741,6 +740,7 @@ function combined_Callback(hObject, eventdata, handles)
 % hObject    handle to combined (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+% Based on solution from https://stackoverflow.com/questions/15824401/how-to-combine-filter-coefficients-for-multiple-stop-band-filters-matlab
 filters = handles.filters;
 H1=dfilt.df2t(filters(:, 1), filters(:, 2));
 H2=dfilt.df2t(filters(:, 3), filters(:, 4));
