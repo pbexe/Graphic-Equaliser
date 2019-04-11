@@ -22,7 +22,7 @@ function varargout = equaliser(varargin)
 
 % Edit the above text to modify the response to help equaliser
 
-% Last Modified by GUIDE v2.5 09-Apr-2019 13:04:03
+% Last Modified by GUIDE v2.5 09-Apr-2019 21:06:44
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -310,11 +310,13 @@ function pushbutton2_Callback(hObject, eventdata, handles)
   [handles.y, handles.Fs]=audioread(name);
   cd(p);
   handles.player = audioplayer(handles.y, handles.Fs);
-  apply_Callback(hObject, eventdata, handles);
+  % apply_Callback(handles.apply, 1, handles);
+  plot(handles.axes1, handles.y);
   set(handles.pushbutton3,'Enable','on')
   set(handles.pushbutton4,'Enable','on')
   set(handles.load_modulating,'Enable','on')
   set(handles.apply,'Enable','on')
+  handles.filters = [];
   guidata(hObject, handles);
 
   
@@ -346,24 +348,30 @@ function loadeq_Callback(hObject, eventdata, handles)
   cd(fpath);
   data = load(name, 'data', '-ascii');
   cd(p);
-  set(handles.slider1, 'value', data(1))
-  set(handles.slider2, 'value', data(2))
-  set(handles.slider3, 'value', data(3))
-  set(handles.slider4, 'value', data(4))
-  set(handles.slider5, 'value', data(5))
-  set(handles.slider6, 'value', data(6))
-  set(handles.slider7, 'value', data(7))
-  set(handles.slider8, 'value', data(8))
-  set(handles.slider9, 'value', data(9))
-  set(handles.slider10, 'value', data(10))
-  apply_Callback(hObject, eventdata, handles);
+  set(handles.slider1, 'value', data(1));
+  set(handles.slider2, 'value', data(2));
+  set(handles.slider3, 'value', data(3));
+  set(handles.slider4, 'value', data(4));
+  set(handles.slider5, 'value', data(5));
+  set(handles.slider6, 'value', data(6));
+  set(handles.slider7, 'value', data(7));
+  set(handles.slider8, 'value', data(8));
+  set(handles.slider9, 'value', data(9));
+  set(handles.slider10, 'value', data(10));
+  set(handles.slider11, 'value', data(11));
+  set(handles.delay, 'value', data(12));
+  set(handles.revGain, 'value', data(13));
+  set(handles.vibratoWidth, 'value', data(14));
+  set(handles.freq, 'value', data(15));
+  set(handles.enableReverb, 'value', data(16));
+  set(handles.enableVib, 'value', data(17));
 
 % --- Executes on button press in saveeq.
 function saveeq_Callback(hObject, eventdata, handles)
 % hObject    handle to saveeq (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-data = zeros(10, 1);
+data = zeros(17, 1);
 data(1) = get(handles.slider1, 'value');
 data(2) = get(handles.slider2, 'value');
 data(3) = get(handles.slider3, 'value');
@@ -374,6 +382,13 @@ data(7) = get(handles.slider7, 'value');
 data(8) = get(handles.slider8, 'value');
 data(9) = get(handles.slider9, 'value');
 data(10) = get(handles.slider10, 'value');
+data(11) = get(handles.slider11, 'value');
+data(12) = get(handles.delay, 'value');
+data(13) = get(handles.revGain, 'value');
+data(14) = get(handles.vibratoWidth, 'value');
+data(15) = get(handles.freq, 'value');
+data(16) = get(handles.enableReverb, 'value');
+data(17) = get(handles.enableVib, 'value');
 
 [file,p, index] = uiputfile({'*.eq'});
 c = pwd;
@@ -398,6 +413,7 @@ filters = zeros(3, 20);
   fcb = 31;
   Q = sqrt(2);
   type = 'Base_Shelf';
+  % Shelving filter from https://uk.mathworks.com/matlabcentral/fileexchange/16568-bass-treble-shelving-filter
   [b a] = shelving(G, fcb, handles.Fs, Q, type);
   filters(:, 1) = b;
   filters(:, 2) = a;
@@ -406,6 +422,7 @@ filters = zeros(3, 20);
   G = (get(handles.slider2, 'value') - 0.5) * 32;
   fcb = 62;
   Q = sqrt(2);
+  % Peaking filter from https://uk.mathworks.com/matlabcentral/fileexchange/16567-peaking-notch-iir-filter
   [b a] = peaking(G, fcb, Q, handles.Fs);
   filters(:, 3) = b;
   filters(:, 4) = a;
@@ -479,14 +496,12 @@ y = filter(b,a, y);
   if get(handles.enableReverb, 'Value')
     x = y;
     Fs = handles.Fs;
-
     % Call moorer reverb
     %set delay of each comb filter
     %set delay of each allpass filter in number of samples
     %Compute a random set of milliseconds and use sample rate
     rand('state',sum(100*clock))
     cd = floor(0.05*rand([1,6])*Fs);
-
     % set gains of 6 comb pass filters
     g1 = 0.5*ones(1,6);
     %set feedback of each comb filter
@@ -494,24 +509,25 @@ y = filter(b,a, y);
     % set input cg and cg1 for moorer function see help moorer
     cg = g2./(1-g1);
     cg1 = g1;
-
-
     %set gain of allpass filter
     ag = get(handles.revGain, 'value');
     %set delay of allpass filter
     ad = round(get(handles.delay, 'value')*Fs);
     %set direct signal gain
     k = 0.5;
-
-
     [y b a] = moorer(x,cg,cg1,cd,ag,ad,k);
+  end
+  if get(handles.enableVib, 'Value')
+      y = vibrato(y, handles.Fs, get(handles.freq, 'value'), get(handles.vibratoWidth, 'value'));
   end
   handles.player = audioplayer(y, handles.Fs);
   yf = fft(y);     
   plot(handles.axes1, y);
+  set(handles.freqResponse,'Enable','on')
+  set(handles.combined,'Enable','on')
   handles.filters = filters;
-  guidata(hObject, handles);
   set(handles.loading, 'Visible', 'off');
+  guidata(handles.apply, handles);
 
 
 
@@ -611,16 +627,19 @@ end
 clear X_stft_amp Y_stft_amp Y_stft
 %% cross-synthesis
 Z_stft = X_stft./X_env.*Y_env;
-z = istft(Z_stft, wlen, hop, nfft, fs);
+z = rot90(istft(Z_stft, wlen, hop, nfft, fs), 3);
 %% memory optimization
 clear X_stft Z_stft X_env Y_env
 set(handles.loading, 'Visible', 'off');
 pause(0);
 
-handles.playerMod = audioplayer(z, fs);   
+handles.playerMod = audioplayer(z, fs); 
+handles.z = z;
+handles.zfs = fs;
 plot(handles.axes2, z);
 set(handles.playMod,'Enable','on')
 set(handles.pauseMod,'Enable','on')
+set(handles.loadToEq,'Enable','on')
 guidata(hObject, handles);
 
 
@@ -733,7 +752,71 @@ H7=dfilt.df2t(filters(:, 13), filters(:, 14));
 H8=dfilt.df2t(filters(:, 15), filters(:, 16));
 H9=dfilt.df2t(filters(:, 17), filters(:, 18));
 H10=dfilt.df2t(filters(:, 19), filters(:, 20));
-Hcas=dfilt.cascade(H1,H2,H3,H4,H5,H6,H7,H8,H9,H10)
-h = fvtool(Hcas)
+Hcas=dfilt.cascade(H1,H2,H3,H4,H5,H6,H7,H8,H9,H10);
+h = fvtool(Hcas);
 set(h, 'FrequencyScale', 'Log');
-set(h, 'NormalizedFrequency', 'Off')
+set(h, 'NormalizedFrequency', 'Off');
+
+
+% --- Executes on button press in loadToEq.
+function loadToEq_Callback(hObject, eventdata, handles)
+% hObject    handle to loadToEq (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.y = handles.z;
+handles.Fs = handles.zfs;
+guidata(hObject, handles);
+apply_Callback(hObject, eventdata, handles);
+
+
+% --- Executes on slider movement.
+function vibratoWidth_Callback(hObject, eventdata, handles)
+% hObject    handle to vibratoWidth (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+
+% --- Executes during object creation, after setting all properties.
+function vibratoWidth_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to vibratoWidth (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on slider movement.
+function freq_Callback(hObject, eventdata, handles)
+% hObject    handle to freq (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+
+% --- Executes during object creation, after setting all properties.
+function freq_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to freq (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on button press in enableVib.
+function enableVib_Callback(hObject, eventdata, handles)
+% hObject    handle to enableVib (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of enableVib
